@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
-export default function Login() {
+export default function Register() {
   const router = useRouter();
-  const [email, setEmail] = useState("demo@example.com");
-  const [password, setPassword] = useState("password");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -25,7 +25,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/login", {
+      const response = await fetch("/api/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -33,15 +33,17 @@ export default function Login() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        throw new Error(data.detail || "Login failed");
+        throw new Error(data.detail || "Registration failed");
       }
 
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("email", data.email);
-      router.push("/");
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("email", data.email);
+      }
+      router.push("/products");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -53,9 +55,9 @@ export default function Login() {
     <main className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Log in</CardTitle>
+          <CardTitle>Create Account</CardTitle>
           <CardDescription>
-            Use your email and password to access the starter application.
+            Register a new account to access the store application.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -83,7 +85,7 @@ export default function Login() {
                 type="password"
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
               />
             </div>
@@ -91,17 +93,13 @@ export default function Login() {
             {error && <p className="text-sm text-red-600">{error}</p>}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Logging in..." : "Log in"}
+              {loading ? "Registering..." : "Register"}
             </Button>
 
-            <Button asChild variant="outline" className="w-full">
-              <Link href="/">Back to landing page</Link>
-            </Button>
-
-            <p className="text-xs text-gray-500 mt-4 text-center">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-blue-600 hover:underline">
-                Register here
+            <p className="text-xs text-muted-foreground mt-4 text-center">
+              Already have an account?{" "}
+              <Link href="/login" className="text-blue-600 hover:underline">
+                Log in here
               </Link>
             </p>
           </form>

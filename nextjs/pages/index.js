@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { Button } from "@/components/ui/button";
@@ -52,9 +53,16 @@ export default function Home() {
             </p>
           </div>
 
-          <Button variant="outline" onClick={handleLogout}>
-            Log out
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link href="/products">
+              <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                Go to Storefront
+              </Button>
+            </Link>
+            <Button variant="outline" onClick={handleLogout}>
+              Log out
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
